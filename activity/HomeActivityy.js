@@ -1,4 +1,5 @@
 import React from 'react';
+import {useTranslation} from 'react-i18next';
 import {SafeAreaView, StyleSheet, View} from 'react-native';
 import colors from '../src/colors';
 import AddButton from '../src/components/buttons/AddButton';
@@ -6,8 +7,9 @@ import Bolt from '../src/components/buttons/Bolt';
 import ProfilePage from '../src/components/profilePage';
 
 export default function HomeActivity({navigation}) {
+  const {t} = useTranslation();
   function addIntent() {
-    navigation.navigate('New Reminder');
+    navigation.navigate(t('New Reminder'));
   }
   return (
     <SafeAreaView style={styles.container}>

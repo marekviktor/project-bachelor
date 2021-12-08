@@ -29,6 +29,10 @@ export default function NewReminderActivity(props) {
     6: 1,
   });
 
+  function setDate(date) {
+    setTimeList([...timeList, date]);
+  }
+
   function executeWarning(message) {
     Toast.showWithGravity(message, Toast.LONG, Toast.BOTTOM);
   }
@@ -94,27 +98,28 @@ export default function NewReminderActivity(props) {
         <TimePicker removeById={removeById} timeList={timeList} />
         <DayPicker days={dayList} />
         <View style={styles.picker}>
-          {/* <MedicamentPicker value={medList} setValue={setMedList} /> */}
+          <MedicamentPicker value={medList} setValue={setMedList} />
         </View>
       </View>
+
       <View style={styles.confirmButton}>
         <PrimaryButton
-          title={'Delete All Reminders'}
-          onPress={() => deleteRemindersFunction()}
-        />
-      </View>
-      <View style={styles.confirmButton}>
-        <PrimaryButton
-          title={'Create new Reminder'}
+          title={t('Create new Reminder')}
           onPress={() => createNewReminder()}
         />
       </View>
-      <View style={styles.confirmButton}>
+      {/* <View style={styles.confirmButton}>
         <PrimaryButton
-          title={'Get Reminders'}
+          title={t('Get Reminders')}
           onPress={() => getRemindersFunction()}
         />
-      </View>
+      </View> */}
+      {/* <View style={styles.confirmButton}>
+        <PrimaryButton
+          title={t('Delete All Reminders')}
+          onPress={() => deleteRemindersFunction()}
+        />
+      </View> */}
       <DatePicker
         modal
         mode={'time'}
