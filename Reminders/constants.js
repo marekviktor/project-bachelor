@@ -1,1 +1,2 @@
-export const remindersStorage = 'ASYNC-remindersStorage';
+export const medicamentStorage = 'ASYNC-medicamentStorage';
+export const timeStorage = 'ASYNC-timeStorage';

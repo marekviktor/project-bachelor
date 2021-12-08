@@ -9,7 +9,7 @@ const GET_MEDICAMENT = gql`
     allMedicaments {
       nodes {
         label: name
-        value: medicamentid
+        value: name
       }
     }
   }
@@ -28,7 +28,6 @@ export default function MedicamentPicker(props) {
     );
   }
 
- 
   return (
     <DropDownPicker
       loading={loading}

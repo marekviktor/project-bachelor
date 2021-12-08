@@ -11,6 +11,7 @@ import notifee, {AndroidImportance, AndroidColor} from '@notifee/react-native';
 import {persistCache} from 'apollo3-cache-persist';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import {NetworkProvider} from 'react-native-offline';
+import './i18.js';
 
 notifee.onBackgroundEvent(async ({detail}) => {
   const {notification} = detail;

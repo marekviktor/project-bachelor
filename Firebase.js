@@ -13,8 +13,11 @@ import {
   DrawerItemList,
 } from '@react-navigation/drawer';
 import colors from './src/colors.js';
+import ActiveReminders from './activity/ActiveReminders.js';
+import {useTranslation} from 'react-i18next';
 
 export default function Firebase() {
+  const {t} = useTranslation();
   const [initializing, setInitializing] = useState(true);
   const [user, setUser] = useState();
 
@@ -66,8 +69,15 @@ export default function Firebase() {
       <NavigationContainer>
         <Drawer.Navigator
           drawerContent={props => <CustomDrawerContent {...props} />}>
-          <Drawer.Screen name="Home" component={HomeActivity} />
-          <Drawer.Screen name="New Reminder" component={NewReminderActivity} />
+          <Drawer.Screen name={t('Home')} component={HomeActivity} />
+          <Drawer.Screen
+            name={t('New Reminder')}
+            component={NewReminderActivity}
+          />
+          <Drawer.Screen
+            name={t('Active Reminders')}
+            component={ActiveReminders}
+          />
         </Drawer.Navigator>
       </NavigationContainer>
     );

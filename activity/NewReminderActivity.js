@@ -11,136 +11,125 @@ import Toast from 'react-native-simple-toast';
 import TimePicker from '../src/components/TimePicker';
 import {deleteAllReminders} from '../Reminders/deleteReminder';
 import notifee from '@notifee/react-native';
+import {useTranslation} from 'react-i18next';
 
-export default class NewReminderActivity extends Component {
-  constructor(props) {
-    super(props);
-    this.state = {
-      timeList: [],
-      open: false,
-      medList: [],
-      dayList: {0: 1, 1: 1, 2: 1, 3: 1, 4: 1, 5: 1, 6: 1},
-    };
-    this.setValue = this.setValue.bind(this);
+export default function NewReminderActivity(props) {
+  const {t} = useTranslation();
+
+  const [timeList, setTimeList] = useState([]);
+  const [open, setOpen] = useState(false);
+  const [medList, setMedList] = useState([]);
+  const [dayList, setDayList] = useState({
+    0: 1,
+    1: 1,
+    2: 1,
+    3: 1,
+    4: 1,
+    5: 1,
+    6: 1,
+  });
+
+  function executeWarning(message) {
+    Toast.showWithGravity(message, Toast.LONG, Toast.BOTTOM);
   }
 
-  setDate = date => {
-    this.setState({
-      timeList: [...this.state.timeList, date],
-    });
-  };
-
-  createNewReminder = async () => {
-    try {
-      await createReminder({
-        active: true,
-        dayList: this.state.dayList,
-        timeList: this.state.timeList,
-        medList: this.state.medList,
-      });
-    } catch (error) {
-      this.executeWarning(error.message);
+  async function createNewReminder() {
+    if (medList.length == 0) {
+      executeWarning('No medicaments chosen!');
+    } else {
+      for (let x = 0; x < medList.length; x++) {
+        try {
+          await createReminder({
+            active: true,
+            name: medList[x],
+            dayList: dayList,
+            timeList: timeList,
+          });
+        } catch (error) {
+          executeWarning(error.message);
+        }
+      }
     }
-  };
+  }
 
-  displayAllNotifications = () => {
+  function displayAllNotifications() {
     notifee
       .getTriggerNotificationIds()
       .then(ids => console.log('All trigger notifications: ', ids));
-  };
+  }
 
-  executeWarning = message => {
-    Toast.showWithGravity(message, Toast.LONG, Toast.BOTTOM);
-  };
-
-  getRemindersFunction = async () => {
+  async function getRemindersFunction() {
     try {
       const storage = await getAllReminders();
       console.log(storage);
-      this.displayAllNotifications();
+      displayAllNotifications();
     } catch (e) {
       console.log(e);
     }
-  };
+  }
 
-  deleteRemindersFunction = async () => {
+  async function deleteRemindersFunction() {
     try {
       const storage = await deleteAllReminders();
       console.log(storage);
+      notifee.cancelAllNotifications();
     } catch (e) {
       console.log(e);
     }
-  };
-
-  removeById = async date => {
-    var index = this.state.timeList.indexOf(date);
-
-    this.setState({
-      timeList: this.state.timeList.filter((_, i) => i !== index),
-    });
-  };
-
-  setValue(callback) {
-    this.setState(state => ({
-      medList: callback(state.medList),
-    }));
   }
 
-  render() {
-    return (
-      <SafeAreaView style={styles.container}>
-        <View style={styles.view}>
-          <PrimaryButton
-            title={'Add time'}
-            onPress={() => {
-              this.setState({open: true});
-            }}></PrimaryButton>
-          <TimePicker
-            removeById={this.removeById}
-            timeList={this.state.timeList}
-          />
-          <DayPicker days={this.state.dayList} />
-          <View style={styles.picker}>
-            <MedicamentPicker
-              value={this.state.medList}
-              setValue={this.setValue}
-            />
-          </View>
+  async function removeById(date) {
+    var index = timeList.indexOf(date);
+    setTimeList(timeList.filter((_, i) => i !== index));
+  }
+
+  return (
+    <SafeAreaView style={styles.container}>
+      <View style={styles.view}>
+        <PrimaryButton
+          title={t('Add')}
+          onPress={() => {
+            setOpen(true);
+          }}></PrimaryButton>
+        <TimePicker removeById={removeById} timeList={timeList} />
+        <DayPicker days={dayList} />
+        <View style={styles.picker}>
+          {/* <MedicamentPicker value={medList} setValue={setMedList} /> */}
         </View>
-        <View style={styles.confirmButton}>
-          <PrimaryButton
-            title={'Delete All Reminders'}
-            onPress={this.deleteRemindersFunction}
-          />
-        </View>
-        <View style={styles.confirmButton}>
-          <PrimaryButton
-            title={'Create new Reminder'}
-            onPress={this.createNewReminder}
-          />
-        </View>
-        <View style={styles.confirmButton}>
-          <PrimaryButton
-            title={'Get Reminders'}
-            onPress={this.getRemindersFunction}
-          />
-        </View>
-        <DatePicker
-          modal
-          mode={'time'}
-          open={this.state.open}
-          date={new Date()}
-          onConfirm={date => {
-            this.setState({open: false});
-            this.setDate(date);
-          }}
-          onCancel={() => {
-            this.setState({open: false});
-          }}
+      </View>
+      <View style={styles.confirmButton}>
+        <PrimaryButton
+          title={'Delete All Reminders'}
+          onPress={() => deleteRemindersFunction()}
         />
-      </SafeAreaView>
-    );
-  }
+      </View>
+      <View style={styles.confirmButton}>
+        <PrimaryButton
+          title={'Create new Reminder'}
+          onPress={() => createNewReminder()}
+        />
+      </View>
+      <View style={styles.confirmButton}>
+        <PrimaryButton
+          title={'Get Reminders'}
+          onPress={() => getRemindersFunction()}
+        />
+      </View>
+      <DatePicker
+        modal
+        mode={'time'}
+        open={open}
+        date={new Date()}
+        onConfirm={date => {
+          setOpen(false);
+          setDate(date);
+        }}
+        onCancel={() => {
+          setOpen(true);
+        }}
+      />
+    </SafeAreaView>
+  );
 }
 
 const styles = StyleSheet.create({

@@ -1,19 +1,19 @@
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import {remindersStorage} from './constants.js';
+import {medicamentStorage, timeStorage} from './constants.js';
 
 export const deleteReminder = async reminder => {
   if (!reminder) {
     throw new Error('Please enter a reminder');
   }
-  const storage = await AsyncStorage.getItem(remindersStorage);
+  const storage = await AsyncStorage.getItem(medicamentStorage);
 
   if (storage && storage.length > 0) {
     const parsedStorage = JSON.parse(storage);
     const updatedStorage = parsedStorage.filter(
-      remindersStorage => remindersStorage.oid !== reminder.oid,
+      medicamentStorage => medicamentStorage.oid !== reminder.oid,
     );
     //cancelAlarmWithoutEdit(reminder.oid);
-    AsyncStorage.setItem(remindersStorage, JSON.stringify(updatedStorage));
+    AsyncStorage.setItem(medicamentStorage, JSON.stringify(updatedStorage));
 
     return updatedStorage;
   } else {
@@ -25,15 +25,15 @@ export const deleteReminderById = async id => {
   if (!id) {
     throw new Error('Please enter a reminder id');
   }
-  const storage = await AsyncStorage.getItem(remindersStorage);
+  const storage = await AsyncStorage.getItem(medicamentStorage);
 
   if (storage && storage.length > 0) {
     const parsedStorage = JSON.parse(storage);
     const updatedStorage = parsedStorage.filter(
-      remindersStorage => remindersStorage.id !== id,
+      medicamentStorage => medicamentStorage.id !== id,
     );
     //await cancelAlarmWithoutEdit(id);
-    AsyncStorage.setItem(remindersStorage, JSON.stringify(updatedStorage));
+    AsyncStorage.setItem(medicamentStorage, JSON.stringify(updatedStorage));
 
     return updatedStorage;
   } else {
@@ -42,14 +42,10 @@ export const deleteReminderById = async id => {
 };
 
 export const deleteAllReminders = async () => {
-  const storage = await AsyncStorage.getItem(remindersStorage);
-
+  const storage = await AsyncStorage.getItem(medicamentStorage);
   if (storage && storage.length > 0) {
-    const parsedStorage = JSON.parse(storage);
-    // parsedStorage.forEach(({oid}) => {
-    //   cancelAlarmWithoutEdit(oid);
-    // });
-    await AsyncStorage.setItem(remindersStorage, JSON.stringify([]));
+    await AsyncStorage.setItem(medicamentStorage, JSON.stringify([]));
+    await AsyncStorage.setItem(timeStorage, JSON.stringify([]));
     return [];
   } else {
     throw new Error('No reminder');
