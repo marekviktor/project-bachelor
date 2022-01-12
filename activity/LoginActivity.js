@@ -29,12 +29,21 @@ export default function LoginActivity({navigation}) {
           if (error.code === 'auth/email-already-in-use') {
             executeWarning('That email address is already in use!');
           }
+          if (error.code === 'auth/wrong-password') {
+            executeWarning('Email and password does not match!');
+          }
+          if (error.code === 'auth/too-many-requests') {
+            executeWarning(
+              'We have blocked all requests from this device due to unusual activity. Try again later!',
+            );
+          }
           if (error.code === 'auth/invalid-email') {
             executeWarning('That email address is invalid!');
           }
           if (error.code === 'auth/user-not-found') {
             executeWarning('That email address is probably not registered!');
           }
+          console.log(error.message);
         });
     } else {
       executeWarning('All fields must be filled in!');

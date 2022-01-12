@@ -7,11 +7,12 @@ import {activateReminder} from './activateReminder.js';
 const equals = (a, b) => JSON.stringify(a) === JSON.stringify(b);
 
 export const createReminder = async ({timeList, dayList, name, active}) => {
+
   if (timeList.length === 0) {
-    throw new Error('Empty timeList array!');
+    throw new Error('No times chosen!');
   }
   if (equals(dayList, {0: 0, 1: 0, 2: 0, 3: 0, 4: 0, 5: 0, 6: 0})) {
-    throw new Error('Empty dayList array!');
+    throw new Error('No days chosen!');
   }
   const id = uuid();
   const reminder = new Reminder({
@@ -31,7 +32,6 @@ export const createReminder = async ({timeList, dayList, name, active}) => {
   } else {
     await AsyncStorage.setItem(medicamentStorage, JSON.stringify([reminder]));
   }
-
 
   activateReminder(id);
 };

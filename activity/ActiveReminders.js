@@ -11,11 +11,14 @@ import {getTimeList} from '../Reminders/getReminders.js';
 import moment from 'moment';
 import {TabView, SceneMap} from 'react-native-tab-view';
 import {useTranslation} from 'react-i18next';
+import PrimaryButton from '../src/components/buttons/primaryButton.js';
+import {deleteAllReminders} from '../Reminders/deleteReminder.js';
 
 export default function TabViewExample() {
   const {t} = useTranslation();
   const [index, setIndex] = useState(0);
   const layout = useWindowDimensions();
+
   const [routes] = useState([
     {key: '0', title: t('Monday')},
     {key: '1', title: t('Tuesday')},
@@ -25,7 +28,23 @@ export default function TabViewExample() {
     {key: '5', title: t('Saturday')},
     {key: '6', title: t('Sunday')},
   ]);
-  const [loading, setLoading] = useState(true);
+
+  let scene = {};
+  const renderScene = SceneMap(scene);
+  for (let x = 0; x < 7; x++) {
+    scene[x] = () => <Day x={x} />;
+  }
+  return (
+    <TabView
+      navigationState={{index, routes}}
+      renderScene={renderScene}
+      onIndexChange={setIndex}
+      initialLayout={{width: layout.width}}
+    />
+  );
+}
+
+function Day(props) {
   const [data, setData] = useState({
     0: [],
     1: [],
@@ -35,10 +54,7 @@ export default function TabViewExample() {
     5: [],
     6: [],
   });
-
-  useEffect(() => {
-    getRemindersFunction();
-  }, []);
+  const [loading, setLoading] = useState(true);
 
   async function getRemindersFunction() {
     setLoading(true);
@@ -71,56 +87,46 @@ export default function TabViewExample() {
     }
   }
 
+  useEffect(() => {
+    getRemindersFunction();
+  }, []);
+
   if (loading) {
-    return <Text>Loading...</Text>;
+    return <Text>Loading</Text>;
   }
-
-  console.log('dt:  ', data);
-
-  let scene = {};
-
-  for (let x = 0; x < 7; x++) {
-    scene[x] = () => <Day data={data[x]} />;
-  }
-
-  const renderScene = SceneMap(scene);
 
   return (
-    <TabView
-      navigationState={{index, routes}}
-      renderScene={renderScene}
-      onIndexChange={setIndex}
-      initialLayout={{width: layout.width}}
-    />
+    <SafeAreaView style={styles.container}>
+      <View style={styles.view}>
+        <Timeline style={styles.list} data={data[props.x]} />
+      </View>
+      <View style={styles.view2}>
+        <PrimaryButton
+          title={'Delete all reminders'}
+          onPress={() => deleteAllReminders()}
+        />
+      </View>
+    </SafeAreaView>
   );
-}
-
-class Day extends Component {
-  constructor(props) {
-    super(props);
-  }
-  componentDidMount() {
-    console.log(this.props.data);
-  }
-  render() {
-    return (
-      <SafeAreaView style={styles.container}>
-        <View style={styles.view}>
-          <Timeline style={styles.list} data={this.props.data} />
-        </View>
-      </SafeAreaView>
-    );
-  }
 }
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    justifyContent: 'center',
-    flexDirection: 'row',
+    flexDirection: 'column',
   },
   view: {
     padding: '10%',
     width: '100%',
+    height: '90%',
+  },
+  tab: {
+    padding: '10%',
+    width: '100%',
+    height: '90%',
+  },
+  view2: {
+    paddingLeft: '5%',
+    paddingRight: '5%',
   },
   list: {},
 });

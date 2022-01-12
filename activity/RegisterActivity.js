@@ -22,7 +22,6 @@ const CREATE_USER = gql`
 
 export default function RegisterActivity() {
   const [createUser, {loading, error}] = useMutation(CREATE_USER);
-
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [name, setName] = useState('');
@@ -47,6 +46,7 @@ export default function RegisterActivity() {
                 },
               },
             });
+            executeWarning('Successfully signed up!');
           })
           .catch(error => {
             if (error.code === 'auth/email-already-in-use') {

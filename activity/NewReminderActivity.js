@@ -1,5 +1,5 @@
-import React, {Component, useState} from 'react';
-import {StyleSheet, View} from 'react-native';
+import React, {Component, useEffect, useState} from 'react';
+import {StyleSheet, Text, View} from 'react-native';
 import {SafeAreaView} from 'react-native-safe-area-context';
 import PrimaryButton from '../src/components/buttons/primaryButton';
 import DayPicker from '../src/components/DayPicker';
@@ -13,9 +13,10 @@ import {deleteAllReminders} from '../Reminders/deleteReminder';
 import notifee from '@notifee/react-native';
 import {useTranslation} from 'react-i18next';
 
-export default function NewReminderActivity(props) {
+export default function NewReminderActivity({route}) {
   const {t} = useTranslation();
-
+  const {medicament} = route.params;
+  const [medi, setMedi] = useState(route.params.medicament);
   const [timeList, setTimeList] = useState([]);
   const [open, setOpen] = useState(false);
   const [medList, setMedList] = useState([]);
@@ -36,21 +37,51 @@ export default function NewReminderActivity(props) {
   function executeWarning(message) {
     Toast.showWithGravity(message, Toast.LONG, Toast.BOTTOM);
   }
-
+  console.log(medi);
   async function createNewReminder() {
-    if (medList.length == 0) {
-      executeWarning('No medicaments chosen!');
+    if (medi != null) {
+      try {
+        await createReminder({
+          active: true,
+          name: medicament,
+          dayList: dayList,
+          timeList: timeList,
+        });
+        setMedi(null);
+        setDayList({
+          0: 1,
+          1: 1,
+          2: 1,
+          3: 1,
+          4: 1,
+          5: 1,
+          6: 1,
+        });
+        executeWarning(t('Reminder successfully created!'));
+        setTimeList([]);
+      } catch (error) {
+        if (error.message === 'No times chosen!') {
+          executeWarning(t('No times chosen!'));
+        }
+        if (error.message === 'No days chosen!') {
+          executeWarning(t('No days chosen!'));
+        }
+      }
     } else {
-      for (let x = 0; x < medList.length; x++) {
-        try {
-          await createReminder({
-            active: true,
-            name: medList[x],
-            dayList: dayList,
-            timeList: timeList,
-          });
-        } catch (error) {
-          executeWarning(error.message);
+      if (medList.length == 0) {
+        executeWarning(t('No medicaments chosen!'));
+      } else {
+        for (let x = 0; x < medList.length; x++) {
+          try {
+            await createReminder({
+              active: true,
+              name: medList[x],
+              dayList: dayList,
+              timeList: timeList,
+            });
+          } catch (error) {
+            executeWarning(error.message);
+          }
         }
       }
     }
@@ -98,7 +129,12 @@ export default function NewReminderActivity(props) {
         <TimePicker removeById={removeById} timeList={timeList} />
         <DayPicker days={dayList} />
         <View style={styles.picker}>
-          <MedicamentPicker value={medList} setValue={setMedList} />
+          <MedicamentPicker
+            placeholder={medi ? medi : t('Choose medicaments')}
+            disabled={medi ? true : false}
+            value={medList}
+            setValue={setMedList}
+          />
         </View>
       </View>
 

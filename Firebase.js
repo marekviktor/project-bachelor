@@ -2,6 +2,8 @@ import React, {useState, useEffect} from 'react';
 import auth from '@react-native-firebase/auth';
 import LoginActivity from './activity/LoginActivity.js';
 import HomeActivity from './activity/HomeActivityy.js';
+import NewMedicamentActivity from './activity/newMedicament';
+import Scanner from './activity/Scanner';
 import RegisterActivity from './activity/RegisterActivity.js';
 import NewReminderActivity from './activity/NewReminderActivity.js';
 import {NavigationContainer} from '@react-navigation/native';
@@ -57,7 +59,7 @@ export default function Firebase() {
     return (
       <DrawerContentScrollView {...props}>
         <DrawerItemList {...props} />
-        <DrawerItem label="Sign Out" onPress={() => signOutUser()} />
+        <DrawerItem label={t('Sign Out')} onPress={() => signOutUser()} />
       </DrawerContentScrollView>
     );
   }
@@ -70,9 +72,16 @@ export default function Firebase() {
         <Drawer.Navigator
           drawerContent={props => <CustomDrawerContent {...props} />}>
           <Drawer.Screen name={t('Home')} component={HomeActivity} />
+          <Drawer.Screen name={t('EAN')} component={Scanner} />
+          <Drawer.Screen
+            name={t('Create new medicament')}
+            component={NewMedicamentActivity}
+            initialParams={{medicament: null}}
+          />
           <Drawer.Screen
             name={t('New Reminder')}
             component={NewReminderActivity}
+            initialParams={{medicament: null}}
           />
           <Drawer.Screen
             name={t('Active Reminders')}

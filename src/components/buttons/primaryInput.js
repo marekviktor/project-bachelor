@@ -19,6 +19,7 @@ export default function PrimaryInput(props) {
   }
   return (
     <TextInput
+      value={props.placeholder}
       onChangeText={value => props.onChangeText(value)}
       secureTextEntry={props.secureTextEntry}
       style={styles.Rectangle}></TextInput>

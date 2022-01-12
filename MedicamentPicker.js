@@ -32,6 +32,7 @@ export default function MedicamentPicker(props) {
     <DropDownPicker
       loading={loading}
       searchable={true}
+      disabled={props.disabled}
       open={open}
       value={props.value}
       items={data.allMedicaments.nodes}
@@ -49,7 +50,7 @@ export default function MedicamentPicker(props) {
         fontFamily: 'Ubuntu-Regular',
         fontSize: 20,
       }}
-      placeholder={'Choose medicaments'}
+      placeholder={props.placeholder}
       dropDownContainerStyle={{
         borderWidth: 0,
         borderRadius: 0,

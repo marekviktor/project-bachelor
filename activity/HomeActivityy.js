@@ -1,21 +1,54 @@
-import React from 'react';
+import React, {useState} from 'react';
 import {useTranslation} from 'react-i18next';
-import {SafeAreaView, StyleSheet, View} from 'react-native';
+import {
+  Button,
+  Dimensions,
+  SafeAreaView,
+  StyleSheet,
+  TouchableOpacity,
+  View,
+} from 'react-native';
+import Image from 'react-native-scalable-image';
 import colors from '../src/colors';
 import AddButton from '../src/components/buttons/AddButton';
-import Bolt from '../src/components/buttons/Bolt';
 import ProfilePage from '../src/components/profilePage';
 
 export default function HomeActivity({navigation}) {
-  const {t} = useTranslation();
+  const {t, i18n} = useTranslation();
   function addIntent() {
     navigation.navigate(t('New Reminder'));
   }
+  const [currentLanguage, setLanguage] = useState(i18n.language);
+
+  const changeLanguage = value => {
+    i18n
+      .changeLanguage(value)
+      .then(() => setLanguage(value))
+      .catch(err => console.log(err));
+  };
+
+  var sk = require('/Users/marekviktor/WebStormProjects/bachelor/src/images/sk.png');
+  var en = require('/Users/marekviktor/WebStormProjects/bachelor/src/images/en.png');
+
   return (
     <SafeAreaView style={styles.container}>
       <ProfilePage />
       <View style={styles.statsBox}>
-        <Bolt />
+        {/* <Bolt /> */}
+        <TouchableOpacity
+          style={styles.lang}
+          onPress={() => {
+            if (currentLanguage == 'sk') {
+              changeLanguage('en');
+            } else {
+              changeLanguage('sk');
+            }
+          }}>
+          <Image
+            source={currentLanguage == 'en' ? en : sk}
+            width={Dimensions.get('window').width * 0.12}
+          />
+        </TouchableOpacity>
         <AddButton onPress={addIntent} />
       </View>
     </SafeAreaView>
@@ -23,6 +56,15 @@ export default function HomeActivity({navigation}) {
 }
 
 const styles = StyleSheet.create({
+  lang: {
+    justifyContent: 'center',
+    alignItems: 'center',
+    height: '80%',
+    aspectRatio: 1,
+    borderRadius: 20,
+    margin: 8,
+    flexDirection: 'row',
+  },
   container: {
     flex: 1,
     flexDirection: 'column',
