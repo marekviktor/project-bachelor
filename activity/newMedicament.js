@@ -28,6 +28,7 @@ const CREATE_MEDICAMENT = gql`
 
 export default function NewMedicamentActivity({route}) {
   const [createMedicament, {loading, error}] = useMutation(CREATE_MEDICAMENT);
+  const {medicament} = route.params;
   const [ean, setEan] = useState(route.params.medicament);
   const [label, setLabel] = useState(null);
   const {t} = useTranslation();

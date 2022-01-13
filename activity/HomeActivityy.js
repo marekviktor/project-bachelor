@@ -1,6 +1,8 @@
-import React, {useState} from 'react';
+import {firebase} from '@react-native-firebase/auth';
+import React, {useState, useEffect} from 'react';
 import {useTranslation} from 'react-i18next';
 import {
+  Text,
   Button,
   Dimensions,
   SafeAreaView,
@@ -15,6 +17,7 @@ import ProfilePage from '../src/components/profilePage';
 
 export default function HomeActivity({navigation}) {
   const {t, i18n} = useTranslation();
+
   function addIntent() {
     navigation.navigate(t('New Reminder'));
   }
@@ -32,7 +35,7 @@ export default function HomeActivity({navigation}) {
 
   return (
     <SafeAreaView style={styles.container}>
-      <ProfilePage />
+      <ProfilePage user={firebase.auth().currentUser.email} />
       <View style={styles.statsBox}>
         {/* <Bolt /> */}
         <TouchableOpacity

@@ -28,8 +28,9 @@ const CREATE_MEDICAMENT = gql`
   }
 `;
 
-export default function HomeActivity({navigation}) {
+export default function HomeActivity({navigation, routes}) {
   const {t} = useTranslation();
+  
   const [mutate] = useMutation(CREATE_MEDICAMENT, {
     onError: err => {
       if (

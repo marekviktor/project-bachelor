@@ -10,7 +10,7 @@ i18n.use(initReactI18next).init({
         'Empty label!': 'Empty label!',
         'Successfully created!': 'Successfully created!',
         'Medicament label': 'Medicament label',
-        'Create new medicament': 'Create new medicament',
+        'New medicament': 'New medicament',
         Submit: 'Submit',
         'No medicament found, do you want to create new one?':
           'No medicament found, do you want to create new one?',
@@ -46,12 +46,12 @@ i18n.use(initReactI18next).init({
         'Empty label!': 'Chýba názov lieku!',
         'Successfully created!': 'Liek úspešne vytvorený!',
         'Medicament label': 'Názov lieku',
-        'Create new medicament': 'Nový liek',
+        'New medicament': 'Nový liek',
         Submit: 'Vytvor',
         'No medicament found, do you want to create new one?':
           'Nebol nájdený žiaden liek, chcete vytvoriť nový?',
         'Do you want to continue?': 'Chcete pokračovať?',
-        Cancel: 'Zruš',
+        Cancel: 'Zrušiť',
         'No days chosen!': 'Neboli vybraté žiadne dni!',
         'No times chosen!': 'Neboli vybraté žiadne časy!',
         'No medicaments chosen!': 'Neboli vybraté žiadne lieky!',

@@ -1,10 +1,10 @@
 import React, {Component, useEffect, useState} from 'react';
-import {StyleSheet, Text, View} from 'react-native';
+import {StyleSheet, Text, TouchableOpacity, View} from 'react-native';
 import {SafeAreaView} from 'react-native-safe-area-context';
 import PrimaryButton from '../src/components/buttons/primaryButton';
 import DayPicker from '../src/components/DayPicker';
 import DatePicker from 'react-native-date-picker';
-import MedicamentPicker from '../MedicamentPicker.js';
+import MedicamentPicker from '../src/components/MedicamentPicker.js';
 import {getAllReminders} from '../Reminders/getReminders.js';
 import {createReminder} from '../Reminders/createReminder.js';
 import Toast from 'react-native-simple-toast';
@@ -13,9 +13,15 @@ import {deleteAllReminders} from '../Reminders/deleteReminder';
 import notifee from '@notifee/react-native';
 import {useTranslation} from 'react-i18next';
 
-export default function NewReminderActivity({route}) {
+export default function NewReminderActivity({navigation, route}) {
+  React.useEffect(() => {
+    const unsubscribe = navigation.addListener('focus', () => {
+      console.log('Refreshed!');
+    });
+    return unsubscribe;
+  }, [navigation]);
+
   const {t} = useTranslation();
-  const {medicament} = route.params;
   const [medi, setMedi] = useState(route.params.medicament);
   const [timeList, setTimeList] = useState([]);
   const [open, setOpen] = useState(false);
@@ -37,17 +43,17 @@ export default function NewReminderActivity({route}) {
   function executeWarning(message) {
     Toast.showWithGravity(message, Toast.LONG, Toast.BOTTOM);
   }
-  console.log(medi);
   async function createNewReminder() {
-    if (medi != null) {
+    if (medi) {
       try {
         await createReminder({
           active: true,
-          name: medicament,
+          name: medi,
           dayList: dayList,
           timeList: timeList,
         });
         setMedi(null);
+
         setDayList({
           0: 1,
           1: 1,
@@ -79,6 +85,17 @@ export default function NewReminderActivity({route}) {
               dayList: dayList,
               timeList: timeList,
             });
+            setDayList({
+              0: 1,
+              1: 1,
+              2: 1,
+              3: 1,
+              4: 1,
+              5: 1,
+              6: 1,
+            });
+            executeWarning(t('Reminder successfully created!'));
+            setTimeList([]);
           } catch (error) {
             executeWarning(error.message);
           }
@@ -136,6 +153,11 @@ export default function NewReminderActivity({route}) {
             setValue={setMedList}
           />
         </View>
+        {medi && (
+          <TouchableOpacity onPress={() => setMedi(null)}>
+            <Text>{t('Remove scanned medicament ❌')}</Text>
+          </TouchableOpacity>
+        )}
       </View>
 
       <View style={styles.confirmButton}>

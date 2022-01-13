@@ -9,11 +9,18 @@ import colors from '../colors';
 import React from 'react';
 import moment from 'moment';
 import Image from 'react-native-scalable-image';
+import {useTranslation} from 'react-i18next';
 
 function Time(props) {
+  const {i18n} = useTranslation();
+  console.log(i18n.language);
   return (
     <View style={styles.container_row}>
-      <Text style={styles.text}>{moment(props.date).format('hh:mm A')}</Text>
+      <Text style={styles.text}>
+        {i18n.language == 'en'
+          ? moment(props.date).format('hh:mm A')
+          : moment(props.date).format('hh:mm')}
+      </Text>
       <TouchableOpacity
         style={styles.remove}
         onPress={() => props.removeById(props.date)}>

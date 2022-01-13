@@ -29,11 +29,7 @@ export default function Scanner({navigation}) {
   const {data, error, loading} = useQuery(GET_MEDICAMENT, {pollInterval: 600});
   const {t} = useTranslation();
   if (!data) {
-    return (
-      <Text style={{fontFamily: 'Ubuntu-Regular', fontSize: 20}}>
-        {t('Updating data')}
-      </Text>
-    );
+    return <Text style={styles.loading}>{t('Updating data')}</Text>;
   }
 
   console.log(isBarcodeScannerEnabled);
@@ -86,7 +82,7 @@ export default function Scanner({navigation}) {
               onPress: () => {
                 setTorchOn(false);
                 setEnabled(true);
-                navigation.navigate(t('Create new medicament'), {
+                navigation.navigate(t('New medicament'), {
                   medicament: e.data,
                 });
               },
@@ -149,5 +145,10 @@ const styles = StyleSheet.create({
     margin: 5,
     height: 40,
     width: 40,
+  },
+  loading: {
+    fontFamily: 'Ubuntu-Regular',
+    fontSize: 20,
+    justifyContent: 'center',
   },
 });

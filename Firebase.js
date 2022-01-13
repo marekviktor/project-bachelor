@@ -74,7 +74,7 @@ export default function Firebase() {
           <Drawer.Screen name={t('Home')} component={HomeActivity} />
           <Drawer.Screen name={t('EAN')} component={Scanner} />
           <Drawer.Screen
-            name={t('Create new medicament')}
+            name={t('New medicament')}
             component={NewMedicamentActivity}
             initialParams={{medicament: null}}
           />

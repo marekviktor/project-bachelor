@@ -1,8 +1,8 @@
 import {gql, useQuery} from '@apollo/client';
 import DropDownPicker from 'react-native-dropdown-picker';
 import React, {useEffect, useState} from 'react';
-import {Text} from 'react-native';
-import colors from './src/colors';
+import {Text, View} from 'react-native';
+import colors from '../colors';
 
 const GET_MEDICAMENT = gql`
   query Query {
@@ -55,7 +55,10 @@ export default function MedicamentPicker(props) {
         borderWidth: 0,
         borderRadius: 0,
       }}
-      searchTextInputStyle={{color: colors.BLACK, fontFamily: 'Ubuntu-Regular'}}
+      searchTextInputStyle={{
+        color: colors.BLACK,
+        fontFamily: 'Ubuntu-Regular',
+      }}
       searchContainerStyle={{
         padding: 0,
         paddingBottom: '4%',
