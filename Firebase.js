@@ -17,6 +17,7 @@ import {
 import colors from './src/colors.js';
 import ActiveReminders from './activity/ActiveReminders.js';
 import {useTranslation} from 'react-i18next';
+import {io} from "socket.io-client";
 
 export default function Firebase() {
   const {t} = useTranslation();
@@ -29,6 +30,8 @@ export default function Firebase() {
   }
 
   useEffect(() => {
+    const socket = io('http://localhost:80')
+    console.log(socket)
     const subscriber = auth().onAuthStateChanged(onAuthStateChanged);
     return subscriber;
   }, []);
