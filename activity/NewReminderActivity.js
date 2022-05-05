@@ -1,4 +1,4 @@
-import React, {Component, useEffect, useState} from 'react';
+import React, {useState} from 'react';
 import {StyleSheet, Text, TouchableOpacity, View} from 'react-native';
 import {SafeAreaView} from 'react-native-safe-area-context';
 import PrimaryButton from '../src/components/buttons/primaryButton';
@@ -14,11 +14,11 @@ import notifee from '@notifee/react-native';
 import {useTranslation} from 'react-i18next';
 
 export default function NewReminderActivity({navigation, route}) {
+
   React.useEffect(() => {
-    const unsubscribe = navigation.addListener('focus', () => {
+    return navigation.addListener('focus', () => {
       console.log('Refreshed!');
     });
-    return unsubscribe;
   }, [navigation]);
 
   const {t} = useTranslation();
@@ -74,7 +74,7 @@ export default function NewReminderActivity({navigation, route}) {
         }
       }
     } else {
-      if (medList.length == 0) {
+      if (medList.length === 0) {
         executeWarning(t('No medicaments chosen!'));
       } else {
         for (let x = 0; x < medList.length; x++) {
@@ -124,14 +124,14 @@ export default function NewReminderActivity({navigation, route}) {
     try {
       const storage = await deleteAllReminders();
       console.log(storage);
-      notifee.cancelAllNotifications();
+      await notifee.cancelAllNotifications();
     } catch (e) {
       console.log(e);
     }
   }
 
   async function removeById(date) {
-    var index = timeList.indexOf(date);
+    const index = timeList.indexOf(date);
     setTimeList(timeList.filter((_, i) => i !== index));
   }
 
@@ -148,7 +148,7 @@ export default function NewReminderActivity({navigation, route}) {
         <View style={styles.picker}>
           <MedicamentPicker
             placeholder={medi ? medi : t('Choose medicaments')}
-            disabled={medi ? true : false}
+            disabled={!!medi}
             value={medList}
             setValue={setMedList}
           />
@@ -166,18 +166,18 @@ export default function NewReminderActivity({navigation, route}) {
           onPress={() => createNewReminder()}
         />
       </View>
-      {/* <View style={styles.confirmButton}>
+      <View style={styles.confirmButton}>
         <PrimaryButton
           title={t('Get Reminders')}
           onPress={() => getRemindersFunction()}
         />
-      </View> */}
-      {/* <View style={styles.confirmButton}>
+      </View>
+      <View style={styles.confirmButton}>
         <PrimaryButton
           title={t('Delete All Reminders')}
           onPress={() => deleteRemindersFunction()}
         />
-      </View> */}
+      </View>
       <DatePicker
         modal
         mode={'time'}

@@ -26,7 +26,7 @@ const GET_MEDICAMENT = gql`
 export default function Scanner({navigation}) {
   const [isBarcodeScannerEnabled, setEnabled] = useState(true);
   const [torchOn, setTorchOn] = useState(false);
-  const {data, error, loading} = useQuery(GET_MEDICAMENT, {pollInterval: 600});
+  const {data, error, loading} = useQuery(GET_MEDICAMENT);
   const {t} = useTranslation();
   if (!data) {
     return <Text style={styles.loading}>{t('Updating data')}</Text>;
@@ -39,7 +39,7 @@ export default function Scanner({navigation}) {
       console.log(data.allMedicaments.nodes.length);
       let empty = 0;
       for (let i = 0; i < data.allMedicaments.nodes.length; i++) {
-        if (data.allMedicaments.nodes[i].ean == e.data) {
+        if (data.allMedicaments.nodes[i].ean === e.data) {
           Alert.alert(
             data.allMedicaments.nodes[i].label,
             t('Do you want to continue?'),
@@ -66,7 +66,7 @@ export default function Scanner({navigation}) {
           empty += 1;
         }
       }
-      if (empty == data.allMedicaments.nodes.length) {
+      if (empty === data.allMedicaments.nodes.length) {
         Alert.alert(
           e.data,
           t('No medicament found, do you want to create new one?'),

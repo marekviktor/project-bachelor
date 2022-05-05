@@ -1,31 +1,65 @@
 import {gql, useQuery} from '@apollo/client';
 import DropDownPicker from 'react-native-dropdown-picker';
-import React, {useEffect, useState} from 'react';
-import {Text, View} from 'react-native';
+import React, {useContext, useState} from 'react';
+import {Text} from 'react-native';
 import colors from '../colors';
+import {AuthContext} from "../../AuthContext";
+import jwt_decode from "jwt-decode";
 
 const GET_MEDICAMENT = gql`
-  query Query {
-    allMedicaments {
-      nodes {
-        label: name
-        value: name
-      }
+    query MyQuery($userId: Int!) {
+        userMedicaments(condition: {userId: $userId}) {
+            nodes {
+                medicament {
+                    title
+                    supplement
+                    strength
+                    packaging
+                    id
+                }
+                admin {
+                    lastName
+                    firstName
+                }
+                dosing
+                nextPrescriptionDate
+            }
+        }
     }
-  }
+
 `;
 
 export default function MedicamentPicker(props) {
   const [open, setOpen] = useState(false);
+  const authContext = useContext(AuthContext);
 
-  const {data, error, loading} = useQuery(GET_MEDICAMENT, {pollInterval: 600});
+  const {data, error, loading} = useQuery(GET_MEDICAMENT,{
+      pollInterval: 15000,
+      variables:{
+          userId:jwt_decode(authContext.authState).accountid
+      }
+  });
 
-  if (!data) {
+  if(loading) {
+      return (
+          <Text style={{fontFamily: 'Ubuntu-Regular', fontSize: 20}}>
+              Loading
+          </Text>
+      );
+  }
+
+  if (error) {
     return (
       <Text style={{fontFamily: 'Ubuntu-Regular', fontSize: 20}}>
-        Network request failed!
+          {error.message}
       </Text>
     );
+  }
+
+  let items = []
+
+  for(let i =0;i<data.userMedicaments.nodes.length;i++) {
+      items.push({label:data.userMedicaments.nodes[i].medicament.title,value:data.userMedicaments.nodes[i].medicament.id})
   }
 
   return (
@@ -35,7 +69,7 @@ export default function MedicamentPicker(props) {
       disabled={props.disabled}
       open={open}
       value={props.value}
-      items={data.allMedicaments.nodes}
+      items={items}
       addCustomItem={false}
       setOpen={setOpen}
       setValue={props.setValue}

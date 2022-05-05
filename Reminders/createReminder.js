@@ -33,5 +33,5 @@ export const createReminder = async ({timeList, dayList, name, active}) => {
     await AsyncStorage.setItem(medicamentStorage, JSON.stringify([reminder]));
   }
 
-  activateReminder(id);
+  await activateReminder(id);
 };

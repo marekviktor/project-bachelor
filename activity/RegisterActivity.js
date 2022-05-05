@@ -1,66 +1,98 @@
-import React, {useState} from 'react';
-import {StyleSheet, View, Text, ScrollView} from 'react-native';
-import auth from '@react-native-firebase/auth';
+import React, {useContext, useEffect, useState} from 'react';
+import {ScrollView, StyleSheet, Text, View} from 'react-native';
 import {gql, useMutation} from '@apollo/client';
 import Toast from 'react-native-simple-toast';
 import PrimaryButton from '../src/components/buttons/primaryButton';
 import PrimaryInput from '../src/components/buttons/primaryInput';
-import colors from '../src/colors';
+import SInfo from "react-native-sensitive-info";
+import AuthDivider from "../AuthDivider";
+import {AuthContext} from "../AuthContext";
+
 
 const CREATE_USER = gql`
-  mutation Mutation($createUserInput: CreateUserInput!) {
-    createUser(input: $createUserInput) {
-      user {
-        userid
-        email
-        firstname
-        lastname
+  mutation MyMutation2(
+    $email: String!
+    $forenameinput: String!
+    $passwordinput: String!
+    $surnameinput: String!
+  ) {
+    registeruser(
+      input: {
+        forenameinput: $forenameinput
+        surnameinput: $surnameinput
+        emailinput: $email
+        passwordinput: $passwordinput
       }
+    ) {
+      clientMutationId
+    }
+  }
+`;
+
+const AUTHENTICATE = gql`
+  mutation MyMutation3($email: String!, $passwordinput: String!) {
+    authenticate(input: {emailinput: $email, passwordinput: $passwordinput}) {
+      clientMutationId
+      jwt
     }
   }
 `;
 
 export default function RegisterActivity() {
-  const [createUser, {loading, error}] = useMutation(CREATE_USER);
+  const [createUser] = useMutation(CREATE_USER);
+  const [authenticate] = useMutation(AUTHENTICATE);
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [name, setName] = useState('');
   const [lastName, setLastName] = useState('');
   const [overPass, setOverPass] = useState('');
+  const authContext = useContext(AuthContext);
 
   function registerUser() {
+    console.log('register')
     if (email !== '' && password !== '' && name !== '' && lastName !== '') {
       if (overPass === password) {
-        auth()
-          .createUserWithEmailAndPassword(email, password)
-          .then(() => {
-            createUser({
-              variables: {
-                createUserInput: {
-                  user: {
-                    userid: auth().currentUser.uid,
-                    email: email,
-                    firstname: name,
-                    lastname: lastName,
-                  },
-                },
-              },
-            });
-            executeWarning('Successfully signed up!');
-          })
-          .catch(error => {
-            if (error.code === 'auth/email-already-in-use') {
-              executeWarning('That email address is already in use!');
+        // auth()
+        //   .createUserWithEmailAndPassword(email, password)
+        //   .then(() => {
+        createUser({
+          variables: {
+            email: email,
+            forenameinput: name,
+            passwordinput: password,
+            surnameinput: lastName
+          },
+          onError : (error) => {
+            console.log(error.message)
+          }
+        }).then(()=>{
+          authenticate({
+            variables: {
+              email:email,
+              passwordinput:password
+            },
+            onError:()=>{
+              console.log(error.message)
             }
-            if (error.code === 'auth/invalid-email') {
-              executeWarning('That email address is invalid!');
-            }
-          });
-      } else {
-        executeWarning('Passwords does not match!');
+          }).then((r) => authContext.setAuthState(r.data.authenticate.jwt))
+        });
+        //         executeWarning('Successfully signed up!');
+        //       })
+        //       .catch(error => {
+        //         if (error.code === 'auth/email-already-in-use') {
+        //           executeWarning('That email address is already in use!');
+        //         }
+        //         if (error.code === 'auth/invalid-email') {
+        //           executeWarning('That email address is invalid!');
+        //         }
+        //       });
+        //   } else {
+        //     executeWarning('Passwords does not match!');
+        //   }
+        // } else {
+        //   executeWarning('All fields must be filled in!');
+        // }
       }
-    } else {
-      executeWarning('All fields must be filled in!');
     }
   }
 
@@ -76,7 +108,7 @@ export default function RegisterActivity() {
   }
 
   function writeHeight(event) {
-    var {height} = event.nativeEvent.layout;
+    const {height} = event.nativeEvent.layout;
     setScreenHeight(height);
   }
 
@@ -111,7 +143,7 @@ export default function RegisterActivity() {
         </View>
       </ScrollView>
       <View style={styles.container_button}>
-        <PrimaryButton title={'Create new account'} onPress={registerUser} />
+        <PrimaryButton title={'Create new account'} onPress={()=>registerUser()} />
       </View>
     </View>
   );

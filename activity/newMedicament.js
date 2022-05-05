@@ -32,7 +32,7 @@ export default function NewMedicamentActivity({route}) {
   const [ean, setEan] = useState(route.params.medicament);
   const [label, setLabel] = useState(null);
   const {t} = useTranslation();
-
+  console.log("bbb")
   function createMedicamentFunction() {
     if (ean != null) {
       if (label != null) {
